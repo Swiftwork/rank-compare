@@ -24,7 +24,6 @@ export function VersionSelector({
 
   return (
     <Field.Root>
-      <Field.Label fontWeight="medium">Game Version</Field.Label>
       <Select.Root
         collection={versionCollection}
         value={value ? [value.toString()] : undefined}

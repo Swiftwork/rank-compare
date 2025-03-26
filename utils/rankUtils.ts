@@ -96,16 +96,3 @@ export function getAccumulatedPercentile(
 
   return accumulated;
 }
-
-/**
- * Checks if a tier is the currently selected tier
- * @param tier The tier to check
- * @param selectedTier The currently selected tier
- * @returns Whether the tier is selected
- */
-export function isSelectedTier(
-  tier: RankTier,
-  selectedTier: { tierId: number } | null
-): boolean {
-  return selectedTier?.tierId === tier.id;
-}

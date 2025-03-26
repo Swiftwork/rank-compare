@@ -8,7 +8,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   shouldHighlightTier,
   getAccumulatedPercentile,
-  isSelectedTier,
 } from "@/utils/rankUtils";
 
 type RankWithTiers = Rank & {
@@ -18,14 +17,13 @@ type RankWithTiers = Rank & {
 
 type RankBarProps = {
   versionId: number;
-  onTierSelect: (tier: RankTier, rank: Rank) => void;
-  selectedTier: {
+  selectedTier?: {
     tierId: number;
     percentile: number | null;
     accumulatedPercentile?: number | null;
-    rank: Rank;
-  } | null;
+  };
   initialRanks?: RankWithTiers[]; // New prop for server-fetched data
+  onTierSelect?: (tier: RankTier, rank: Rank) => void;
 };
 
 export function RankBar({
@@ -98,25 +96,21 @@ export function RankBar({
 
   return (
     <VStack gap={4} align="stretch" ref={componentRef}>
-      <Text fontWeight="medium">Ranks</Text>
-      <Box
-        width="100%"
-        height="60px"
-        position="relative"
-        borderRadius="md"
-        overflow="hidden"
-      >
-        <HStack gap={0} height="100%" width="100%">
+      <Box width="100%" position="relative" borderRadius="md">
+        <HStack gap={0} width="100%">
           {ranks.map((rank) => {
             // Evenly distribute ranks, ignoring percentile
             const rankWidth = 1 / ranks.length;
 
             return (
-              <Box
+              <VStack
+                gap={1}
+                key={rank.id}
                 height="100%"
                 width={`${rankWidth * 100}%`}
                 display="flex"
                 position="relative"
+                flexDirection="column"
               >
                 {/* Tiers within the rank - with small gaps */}
                 <HStack gap={1} width="100%" height="100%" p={1}>
@@ -134,10 +128,13 @@ export function RankBar({
                               ranks
                             )
                           : false;
-                      const isSelected = isSelectedTier(tier, selectedTier);
+                      const isSelected = tier.id === selectedTier?.tierId;
 
                       return (
                         <Tooltip
+                          positioning={{
+                            placement: "top",
+                          }}
                           key={tier.id}
                           content={`${rank.name} ${tier.name}${
                             tier.percentile
@@ -150,22 +147,15 @@ export function RankBar({
                           }`}
                         >
                           <Box
-                            height={
-                              isHighlighted || isSelected ? "110%" : "100%"
-                            }
+                            height={12}
                             width={`${(100 - (rank.tiers.length - 1) * 2) / rank.tiers.length}%`}
                             position="relative"
                             borderRadius="sm"
-                            bg={isSelected ? "white" : rank.color || "gray.400"}
+                            bg={rank.color || "gray.400"}
                             opacity={
                               selectedTier && !isHighlighted && !isSelected
                                 ? 0.5
                                 : 1
-                            }
-                            transform={
-                              isHighlighted || isSelected
-                                ? "translateY(-5%)"
-                                : "none"
                             }
                             transition="all 0.2s ease"
                             cursor="pointer"
@@ -186,6 +176,23 @@ export function RankBar({
                                 transition="height 0.2s ease"
                               />
                             )}
+                            <Text
+                              position="absolute"
+                              top="2px"
+                              left="50%"
+                              transform="translateX(-50%)"
+                              fontSize="xs"
+                              fontWeight="bold"
+                              color="gray.900"
+                              width="100%"
+                              textAlign="center"
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                              whiteSpace="nowrap"
+                              px={1}
+                            >
+                              {tier.name}
+                            </Text>
                           </Box>
                         </Tooltip>
                       );
@@ -211,7 +218,20 @@ export function RankBar({
                     </Box>
                   )}
                 </HStack>
-              </Box>
+
+                <Text
+                  textAlign="center"
+                  fontSize="xs"
+                  fontWeight="medium"
+                  color="gray.600"
+                  width="100%"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                  whiteSpace="nowrap"
+                >
+                  {rank.name}
+                </Text>
+              </VStack>
             );
           })}
         </HStack>
