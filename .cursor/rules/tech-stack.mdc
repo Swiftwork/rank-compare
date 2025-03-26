@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project's Purpose
+To compare ranks between different games using the player percentile of each rank and tier.
+
+# Project's Tech-Stack
+- nextjs
+- supabase
+- prisma
+- chakra ui v3
+- typescript
+- react-hook-form
+
+# Project's Rules
+- Always use named exports.

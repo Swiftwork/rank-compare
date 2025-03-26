@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Game {
+  id        Int           @id @default(autoincrement())
+  name      String        @unique
+  banner    String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  versions  GameVersion[]
+}
+
+model GameVersion {
+  id        Int      @id @default(autoincrement())
+  name      String // e.g., "Season 13", "Patch 1.2.3"
+  date      DateTime @default(now())
+  source    String? // Source of the version information
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId    Int
+  ranks     Rank[] // Relation to ranks
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gameId, name])
+}
+
+model Rank {
+  id            Int         @id @default(autoincrement())
+  name          String // e.g., "Silver", "Gold", "Platinum"
+  order         Int // For sorting ranks (e.g., 1 for Silver, 2 for Gold)
+  badge         String?
+  color         String? // Added color field for rank styling
+  gameVersion   GameVersion @relation(fields: [gameVersionId], references: [id], onDelete: Cascade)
+  gameVersionId Int // Changed from gameId to gameVersionId
+  tiers         RankTier[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([gameVersionId, order])
+  @@unique([gameVersionId, name])
+}
+
+model RankTier {
+  id         Int      @id @default(autoincrement())
+  name       String // e.g., "I", "II", "III"
+  order      Int // For sorting ranks (e.g., 1 for I, 2 for II)
+  badge      String?
+  percentile Float?
+  rank       Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
+  rankId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([rankId, order])
+  @@unique([rankId, name])
+}
