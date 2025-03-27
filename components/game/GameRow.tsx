@@ -28,7 +28,7 @@ export function GameRow({
 }: GameRowProps) {
   return (
     <Flex
-      width="100%"
+      width="full"
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
@@ -50,15 +50,15 @@ export function GameRow({
             alt={game.name}
             objectFit="cover"
             borderRadius="md"
-            width="100%"
-            height="100%"
+            width="full"
+            height="full"
           />
         ) : (
           <Box
             bg="gray.200"
             _dark={{ bg: "gray.700" }}
-            width="100%"
-            height="100%"
+            width="full"
+            height="full"
             borderRadius="md"
           />
         )}

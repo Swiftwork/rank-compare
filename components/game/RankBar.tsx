@@ -96,8 +96,8 @@ export function RankBar({
 
   return (
     <VStack gap={4} align="stretch" ref={componentRef}>
-      <Box width="100%" position="relative" borderRadius="md">
-        <HStack gap={0} width="100%">
+      <Box width="full" position="relative" borderRadius="md">
+        <HStack gap={0} width="full">
           {ranks.map((rank) => {
             // Evenly distribute ranks, ignoring percentile
             const rankWidth = 1 / ranks.length;
@@ -106,14 +106,14 @@ export function RankBar({
               <VStack
                 gap={1}
                 key={rank.id}
-                height="100%"
+                height="full"
                 width={`${rankWidth * 100}%`}
                 display="flex"
                 position="relative"
                 flexDirection="column"
               >
                 {/* Tiers within the rank - with small gaps */}
-                <HStack gap={1} width="100%" height="100%" p={1}>
+                <HStack gap={1} width="full" height="full" p={1}>
                   {rank.tiers.length > 0 ? (
                     rank.tiers.map((tier) => {
                       const isHighlighted =
@@ -138,11 +138,11 @@ export function RankBar({
                           key={tier.id}
                           content={`${rank.name} ${tier.name}${
                             tier.percentile
-                              ? ` (${(tier.percentile * 100).toFixed(2)}%)`
+                              ? ` (${tier.percentile.toFixed(2)}%)`
                               : ""
                           }${
                             tier.percentile
-                              ? ` - Top ${(getAccumulatedPercentile(tier, rank, ranks) * 100).toFixed(2)}%`
+                              ? ` - Top ${getAccumulatedPercentile(tier, rank, ranks).toFixed(2)}%`
                               : ""
                           }`}
                         >
@@ -184,7 +184,7 @@ export function RankBar({
                               fontSize="xs"
                               fontWeight="bold"
                               color="gray.900"
-                              width="100%"
+                              width="full"
                               textAlign="center"
                               overflow="hidden"
                               textOverflow="ellipsis"
@@ -199,8 +199,8 @@ export function RankBar({
                     })
                   ) : (
                     <Box
-                      width="100%"
-                      height="100%"
+                      width="full"
+                      height="full"
                       position="relative"
                       opacity={selectedTier ? 0.5 : 1}
                     >
@@ -224,7 +224,7 @@ export function RankBar({
                   fontSize="xs"
                   fontWeight="medium"
                   color="gray.600"
-                  width="100%"
+                  width="full"
                   overflow="hidden"
                   textOverflow="ellipsis"
                   whiteSpace="nowrap"

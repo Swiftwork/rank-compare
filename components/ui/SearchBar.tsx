@@ -26,7 +26,7 @@ export default function SearchBar({ games, onSelect }: SearchBarProps) {
   );
 
   return (
-    <Box position="relative" width="100%" maxW="500px">
+    <Box position="relative" width="full" maxW="500px">
       <InputGroup>
         <Input
           placeholder="Search for games..."
@@ -43,9 +43,9 @@ export default function SearchBar({ games, onSelect }: SearchBarProps) {
       {showResults && searchQuery && (
         <Box
           position="absolute"
-          top="100%"
+          top="full"
           left="0"
-          width="100%"
+          width="full"
           bg="chakra-body-bg"
           borderWidth="1px"
           borderRadius="md"

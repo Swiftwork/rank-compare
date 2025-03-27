@@ -1,4 +1,5 @@
 import { Providers } from "@/components/ui/providers";
+import BadgesImage from "@/public/badges.png";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -16,7 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      style={{
+        backgroundImage: `url(${BadgesImage.src})`,
+        backgroundRepeat: "repeat-x",
+      }}
+    >
       <body>
         <Providers>{children}</Providers>
       </body>
