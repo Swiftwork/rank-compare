@@ -1,4 +1,4 @@
-import { Rank, RankTier } from "@prisma/client";
+import { Rank, RankTier } from '@prisma/client';
 
 type RankWithTiers = Rank & {
   tiers: RankTier[];
@@ -16,7 +16,7 @@ export function shouldHighlightTier(
   tier: RankTier,
   rank: RankWithTiers,
   selectedTier: { accumulatedPercentile: number | null } | null,
-  ranks: RankWithTiers[]
+  ranks: RankWithTiers[],
 ): boolean {
   if (
     !selectedTier ||
@@ -65,7 +65,7 @@ export function shouldHighlightTier(
 export function getAccumulatedPercentile(
   tier: RankTier,
   rank: RankWithTiers,
-  ranks: RankWithTiers[]
+  ranks: RankWithTiers[],
 ): number {
   let accumulated = 0;
   let foundRank = false;

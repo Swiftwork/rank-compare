@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import { Box, HStack, Text, Image, VStack, Skeleton } from "@chakra-ui/react";
-import { Rank, RankTier } from "@prisma/client";
-import { Tooltip } from "@/components/ui/tooltip";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from 'react';
+
+import { Tooltip } from '@/components/ui/tooltip';
 import {
-  shouldHighlightTier,
   getAccumulatedPercentile,
-} from "@/utils/rankUtils";
+  shouldHighlightTier,
+} from '@/utils/rankUtils';
+
+import { Box, HStack, Image, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { Rank, RankTier } from '@prisma/client';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type RankWithTiers = Rank & {
   tiers: RankTier[];
@@ -48,7 +50,7 @@ export function RankBar({
         const data = await response.json();
         setRanks(data);
       } catch (error) {
-        console.error("Failed to fetch ranks:", error);
+        console.error('Failed to fetch ranks:', error);
       } finally {
         setLoading(false);
       }
@@ -57,7 +59,7 @@ export function RankBar({
     if (!initialRanks || ranks.length === 0) {
       fetchRanks();
     }
-  }, [versionId, initialRanks]);
+  }, [versionId, initialRanks, ranks.length]);
 
   if (loading) {
     return <Skeleton height="100px" />;
@@ -76,7 +78,7 @@ export function RankBar({
       const accumulatedPercentile = getAccumulatedPercentile(
         tier,
         rankWithTiers,
-        ranks
+        ranks,
       );
 
       // Create a new tier object with the accumulated percentile
@@ -89,14 +91,14 @@ export function RankBar({
 
       // Update URL with selected tier ID
       const newSearchParams = new URLSearchParams(searchParams.toString());
-      newSearchParams.set("tierId", tier.id.toString());
+      newSearchParams.set('tierId', tier.id.toString());
       router.replace(`?${newSearchParams.toString()}`, { scroll: false });
     }
   };
 
   return (
-    <VStack gap={4} align="stretch" ref={componentRef}>
-      <Box width="full" position="relative" borderRadius="md">
+    <VStack ref={componentRef} align="stretch" gap={4}>
+      <Box borderRadius="md" position="relative" width="full">
         <HStack gap={0} width="full">
           {ranks.map((rank) => {
             // Evenly distribute ranks, ignoring percentile
@@ -104,16 +106,15 @@ export function RankBar({
 
             return (
               <VStack
-                gap={1}
                 key={rank.id}
-                height="full"
-                width={`${rankWidth * 100}%`}
                 display="flex"
-                position="relative"
                 flexDirection="column"
-              >
+                gap={1}
+                height="full"
+                position="relative"
+                width={`${rankWidth * 100}%`}>
                 {/* Tiers within the rank - with small gaps */}
-                <HStack gap={1} width="full" height="full" p={1}>
+                <HStack gap={1} height="full" p={1} width="full">
                   {rank.tiers.length > 0 ? (
                     rank.tiers.map((tier) => {
                       const isHighlighted =
@@ -125,72 +126,69 @@ export function RankBar({
                                 accumulatedPercentile:
                                   selectedTier.accumulatedPercentile,
                               },
-                              ranks
+                              ranks,
                             )
                           : false;
                       const isSelected = tier.id === selectedTier?.tierId;
 
                       return (
                         <Tooltip
-                          positioning={{
-                            placement: "top",
-                          }}
                           key={tier.id}
                           content={`${rank.name} ${tier.name}${
                             tier.percentile
                               ? ` (${tier.percentile.toFixed(2)}%)`
-                              : ""
+                              : ''
                           }${
                             tier.percentile
                               ? ` - Top ${getAccumulatedPercentile(tier, rank, ranks).toFixed(2)}%`
-                              : ""
+                              : ''
                           }`}
-                        >
+                          positioning={{
+                            placement: 'top',
+                          }}>
                           <Box
-                            height={12}
-                            width={`${(100 - (rank.tiers.length - 1) * 2) / rank.tiers.length}%`}
-                            position="relative"
+                            _hover={{ filter: 'brightness(1.1)' }}
+                            bg={rank.color || 'gray.400'}
                             borderRadius="sm"
-                            bg={rank.color || "gray.400"}
+                            cursor="pointer"
+                            height={12}
                             opacity={
                               selectedTier && !isHighlighted && !isSelected
                                 ? 0.5
                                 : 1
                             }
+                            position="relative"
                             transition="all 0.2s ease"
-                            cursor="pointer"
-                            _hover={{ filter: "brightness(1.1)" }}
-                            onClick={() => handleTierSelect(tier, rank)}
-                          >
+                            width={`${(100 - (rank.tiers.length - 1) * 2) / rank.tiers.length}%`}
+                            onClick={() => handleTierSelect(tier, rank)}>
                             {tier.badge && (
                               <Image
-                                src={tier.badge}
                                 alt={`${rank.name} ${tier.name}`}
-                                position="absolute"
                                 bottom="5px"
-                                left="50%"
-                                transform="translateX(-50%)"
                                 height={
-                                  isHighlighted || isSelected ? "35px" : "30px"
+                                  isHighlighted || isSelected ? '35px' : '30px'
                                 }
+                                left="50%"
+                                position="absolute"
+                                src={tier.badge}
+                                transform="translateX(-50%)"
                                 transition="height 0.2s ease"
                               />
                             )}
                             <Text
-                              position="absolute"
-                              top="2px"
-                              left="50%"
-                              transform="translateX(-50%)"
+                              color="gray.900"
                               fontSize="xs"
                               fontWeight="bold"
-                              color="gray.900"
-                              width="full"
-                              textAlign="center"
+                              left="50%"
                               overflow="hidden"
-                              textOverflow="ellipsis"
-                              whiteSpace="nowrap"
+                              position="absolute"
                               px={1}
-                            >
+                              textAlign="center"
+                              textOverflow="ellipsis"
+                              top="2px"
+                              transform="translateX(-50%)"
+                              whiteSpace="nowrap"
+                              width="full">
                               {tier.name}
                             </Text>
                           </Box>
@@ -199,20 +197,19 @@ export function RankBar({
                     })
                   ) : (
                     <Box
-                      width="full"
                       height="full"
-                      position="relative"
                       opacity={selectedTier ? 0.5 : 1}
-                    >
+                      position="relative"
+                      width="full">
                       {rank.badge && (
                         <Image
-                          src={rank.badge}
                           alt={rank.name}
-                          position="absolute"
                           bottom="5px"
-                          left="50%"
-                          transform="translateX(-50%)"
                           height="30px"
+                          left="50%"
+                          position="absolute"
+                          src={rank.badge}
+                          transform="translateX(-50%)"
                         />
                       )}
                     </Box>
@@ -220,15 +217,14 @@ export function RankBar({
                 </HStack>
 
                 <Text
-                  textAlign="center"
+                  color="gray.600"
                   fontSize="xs"
                   fontWeight="medium"
-                  color="gray.600"
-                  width="full"
                   overflow="hidden"
+                  textAlign="center"
                   textOverflow="ellipsis"
                   whiteSpace="nowrap"
-                >
+                  width="full">
                   {rank.name}
                 </Text>
               </VStack>

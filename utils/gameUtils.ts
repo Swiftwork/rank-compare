@@ -1,5 +1,5 @@
-import { toaster } from "@/components/ui/toaster";
-import { Game, GameVersion } from "@prisma/client";
+import { toaster } from '@/components/ui/toaster';
+import { Game, GameVersion } from '@prisma/client';
 
 /**
  * Fetches all versions for a specific game from the API
@@ -7,7 +7,7 @@ import { Game, GameVersion } from "@prisma/client";
  * @returns A promise resolving to the game versions
  */
 export async function fetchVersionsForGame(
-  gameId: number
+  gameId: number,
 ): Promise<GameVersion[]> {
   try {
     const response = await fetch(`/api/games/${gameId}/versions`);
@@ -20,7 +20,7 @@ export async function fetchVersionsForGame(
   } catch (error) {
     console.error(`Failed to fetch versions for game ${gameId}:`, error);
     toaster.error({
-      title: "Error fetching game versions",
+      title: 'Error fetching game versions',
       duration: 3000,
     });
     return [];
@@ -35,7 +35,7 @@ export async function fetchVersionsForGame(
  */
 export function removeGameFromVersionMap(
   gameId: number,
-  currentMap: Record<number, number>
+  currentMap: Record<number, number>,
 ): Record<number, number> {
   const updated = { ...currentMap };
   delete updated[gameId];

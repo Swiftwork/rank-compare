@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Select, Field, createListCollection, Portal } from "@chakra-ui/react";
-import { GameVersion } from "@prisma/client";
+import { createListCollection, Field, Portal, Select } from '@chakra-ui/react';
+import { GameVersion } from '@prisma/client';
 
 interface VersionSelectorProps {
   versions: GameVersion[];
@@ -27,8 +27,7 @@ export function VersionSelector({
       <Select.Root
         collection={versionCollection}
         value={value ? [value.toString()] : undefined}
-        onValueChange={(e) => onValueChange(parseInt(e.value[0]))}
-      >
+        onValueChange={(e) => onValueChange(parseInt(e.value[0]))}>
         <Select.HiddenSelect />
         <Select.Control>
           <Select.Trigger>
@@ -42,7 +41,7 @@ export function VersionSelector({
           <Select.Positioner>
             <Select.Content>
               {versionCollection.items.map((version) => (
-                <Select.Item item={version} key={version.value}>
+                <Select.Item key={version.value} item={version}>
                   {version.label}
                   <Select.ItemIndicator />
                 </Select.Item>

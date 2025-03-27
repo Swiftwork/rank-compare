@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { Box, Image, Heading, VStack, Flex } from "@chakra-ui/react";
-import { Game, GameVersion, Rank, RankTier } from "@prisma/client";
-import { VersionSelector } from "./VersionSelector";
-import { RankBar } from "./RankBar";
+import { RankBar } from './RankBar';
+import { VersionSelector } from './VersionSelector';
+
+import { Box, Flex, Heading, Image, VStack } from '@chakra-ui/react';
+import { Game, GameVersion, Rank, RankTier } from '@prisma/client';
 
 interface GameRowProps {
   game: Game;
@@ -28,38 +29,36 @@ export function GameRow({
 }: GameRowProps) {
   return (
     <Flex
-      width="full"
-      borderWidth="1px"
+      alignItems={{ base: 'stretch', md: 'center' }}
       borderRadius="lg"
-      overflow="hidden"
-      shadow="md"
-      direction={{ base: "column", md: "row" }}
-      p={4}
+      borderWidth="1px"
+      direction={{ base: 'column', md: 'row' }}
       gap={4}
-      alignItems={{ base: "stretch", md: "center" }}
-    >
+      overflow="hidden"
+      p={4}
+      shadow="md"
+      width="full">
       {/* Game Banner */}
       <Box
-        width={{ base: "100%", md: "120px" }}
-        height={{ base: "80px", md: "80px" }}
         flexShrink={0}
-      >
+        height={{ base: '80px', md: '80px' }}
+        width={{ base: '100%', md: '120px' }}>
         {game.banner ? (
           <Image
-            src={game.banner}
             alt={game.name}
-            objectFit="cover"
             borderRadius="md"
-            width="full"
             height="full"
+            objectFit="cover"
+            src={game.banner}
+            width="full"
           />
         ) : (
           <Box
+            _dark={{ bg: 'gray.700' }}
             bg="gray.200"
-            _dark={{ bg: "gray.700" }}
-            width="full"
-            height="full"
             borderRadius="md"
+            height="full"
+            width="full"
           />
         )}
       </Box>
@@ -67,14 +66,13 @@ export function GameRow({
       {/* Game Info and Version Selector */}
       <VStack
         align="flex-start"
-        gap={2}
-        width={{ base: "100%", md: "200px" }}
         flexShrink={0}
-      >
+        gap={2}
+        width={{ base: '100%', md: '200px' }}>
         <Heading size="md">{game.name}</Heading>
         <VersionSelector
-          versions={versions}
           value={selectedVersionId}
+          versions={versions}
           onValueChange={onVersionChange}
         />
       </VStack>
@@ -83,8 +81,8 @@ export function GameRow({
       <Box flex="1">
         {selectedVersionId && (
           <RankBar
-            versionId={selectedVersionId}
             selectedTier={selectedTier}
+            versionId={selectedVersionId}
             onTierSelect={onTierSelect}
           />
         )}

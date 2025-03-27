@@ -1,14 +1,14 @@
-import { Providers } from "@/components/ui/providers";
-import BadgesImage from "@/public/badges.png";
+import { Providers } from '@/components/ui/providers';
+import BadgesImage from '@/public/badges.png';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+  : 'http://localhost:3000';
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Rank Compare",
-  description: "Compare rankings between different games.",
+  title: 'Rank Compare',
+  description: 'Compare rankings between different games.',
 };
 
 export default function RootLayout({
@@ -19,12 +19,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
       style={{
         backgroundImage: `url(${BadgesImage.src})`,
-        backgroundRepeat: "repeat-x",
+        backgroundRepeat: 'repeat-x',
       }}
-    >
+      suppressHydrationWarning>
       <body>
         <Providers>{children}</Providers>
       </body>

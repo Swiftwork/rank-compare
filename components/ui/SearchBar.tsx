@@ -1,16 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import {
-  Input,
-  InputGroup,
-  Box,
-  Text,
-  Flex,
-  List,
-  Image,
-} from "@chakra-ui/react";
-import { Game } from "@prisma/client";
+import { useState } from 'react';
+
+import { Box, Field, Flex, Image, Input, List, Text } from '@chakra-ui/react';
+import { Game } from '@prisma/client';
 
 interface SearchBarProps {
   games: Game[];
@@ -18,66 +11,64 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ games, onSelect }: SearchBarProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
 
   const filteredGames = games.filter((game) =>
-    game.name.toLowerCase().includes(searchQuery.toLowerCase())
+    game.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
-    <Box position="relative" width="full" maxW="500px">
-      <InputGroup>
+    <Box maxW="500px" position="relative" width="full">
+      <Field.Root>
         <Input
           placeholder="Search for games..."
           value={searchQuery}
+          onBlur={() => setTimeout(() => setShowResults(false), 200)}
           onChange={(e) => {
             setSearchQuery(e.target.value);
             setShowResults(true);
           }}
           onFocus={() => setShowResults(true)}
-          onBlur={() => setTimeout(() => setShowResults(false), 200)}
         />
-      </InputGroup>
+      </Field.Root>
 
       {showResults && searchQuery && (
         <Box
-          position="absolute"
-          top="full"
-          left="0"
-          width="full"
           bg="chakra-body-bg"
-          borderWidth="1px"
           borderRadius="md"
+          borderWidth="1px"
           boxShadow="md"
-          zIndex="dropdown"
+          left="0"
           maxH="300px"
           overflowY="auto"
-        >
+          position="absolute"
+          top="full"
+          width="full"
+          zIndex="dropdown">
           <List.Root gap={2} p={2}>
             {filteredGames.length > 0 ? (
               filteredGames.map((game) => (
                 <List.Item
                   key={game.id}
-                  p={2}
+                  _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
                   borderRadius="md"
-                  _hover={{ bg: "gray.100", _dark: { bg: "gray.700" } }}
                   cursor="pointer"
+                  p={2}
                   onClick={() => {
                     onSelect(game);
-                    setSearchQuery("");
+                    setSearchQuery('');
                     setShowResults(false);
-                  }}
-                >
+                  }}>
                   <Flex align="center">
                     {game.banner && (
                       <Image
-                        src={game.banner}
                         alt={game.name}
+                        borderRadius="sm"
                         boxSize="32px"
                         mr={2}
                         objectFit="cover"
-                        borderRadius="sm"
+                        src={game.banner}
                       />
                     )}
                     <Text>{game.name}</Text>

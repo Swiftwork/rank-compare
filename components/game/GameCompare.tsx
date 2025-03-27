@@ -1,26 +1,28 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-  VStack,
-  Box,
-  Text,
-  Wrap,
-  WrapItem,
-  Center,
-  Spinner,
-} from "@chakra-ui/react";
-import SearchBar from "../ui/SearchBar";
-import { GameTag } from "../ui/GameTag";
-import { Game, GameVersion, Rank, RankTier } from "@prisma/client";
-import { toaster } from "../ui/toaster";
-import { GameRow } from "./GameRow";
+import { useEffect, useState } from 'react';
+
 import {
   fetchVersionsForGame,
   removeGameFromVersionMap,
-} from "@/utils/gameUtils";
-import { buildGameCompareUrl } from "@/utils/urlUtils";
+} from '@/utils/gameUtils';
+import { buildGameCompareUrl } from '@/utils/urlUtils';
+import { GameTag } from '../ui/GameTag';
+import SearchBar from '../ui/SearchBar';
+
+import { GameRow } from './GameRow';
+
+import {
+  Box,
+  Center,
+  Spinner,
+  Text,
+  VStack,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react';
+import { Game, GameVersion, Rank, RankTier } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 
 type GameCompareProps = {
   initialData: {
@@ -40,9 +42,9 @@ export function GameCompare({ initialData }: GameCompareProps) {
   const router = useRouter();
 
   // Initialize state from server data
-  const [games, setGames] = useState<Game[]>(initialData.allGames);
+  const [games] = useState<Game[]>(initialData.allGames);
   const [selectedGames, setSelectedGames] = useState<Game[]>(
-    initialData.selectedGames
+    initialData.selectedGames,
   );
   const [gameVersionsMap, setGameVersionsMap] = useState<
     Record<number, GameVersion[]>
@@ -50,7 +52,7 @@ export function GameCompare({ initialData }: GameCompareProps) {
   const [selectedVersionsMap, setSelectedVersionsMap] = useState<
     Record<number, number>
   >(initialData.selectedVersionsMap);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   // Using the server-provided selectedTier or null
   const [selectedTier, setSelectedTier] = useState<{
@@ -64,14 +66,14 @@ export function GameCompare({ initialData }: GameCompareProps) {
   useEffect(() => {
     if (selectedGames.length === 0) {
       // Clear URL params if no games selected
-      router.replace("/");
+      router.replace('/');
       return;
     }
 
     const newUrl = buildGameCompareUrl(
       selectedGames,
       selectedVersionsMap,
-      selectedTier
+      selectedTier,
     );
     router.replace(newUrl);
   }, [selectedGames, selectedVersionsMap, selectedTier, router]);
@@ -123,7 +125,10 @@ export function GameCompare({ initialData }: GameCompareProps) {
       setSelectedTier(null);
     } else {
       // Check if the tier has accumulatedPercentile added by our RankBar
-      const accumulatedPercentile = (tier as any).accumulatedPercentile;
+      // todo: remove this hack
+      const accumulatedPercentile = (
+        tier as RankTier & { accumulatedPercentile: number }
+      ).accumulatedPercentile;
 
       // Select the new tier with accumulated percentile
       setSelectedTier({
@@ -144,9 +149,9 @@ export function GameCompare({ initialData }: GameCompareProps) {
   }
 
   return (
-    <VStack gap={6} align="stretch">
+    <VStack align="stretch" gap={6}>
       <Box>
-        <VStack gap={4} align="stretch">
+        <VStack align="stretch" gap={4}>
           <SearchBar games={games} onSelect={handleGameSelect} />
 
           <Wrap gap={2}>
@@ -160,17 +165,11 @@ export function GameCompare({ initialData }: GameCompareProps) {
       </Box>
 
       {selectedGames.length > 0 ? (
-        <VStack gap={4} align="stretch">
+        <VStack align="stretch" gap={4}>
           {selectedGames.map((game) => (
             <GameRow
               key={game.id}
               game={game}
-              versions={gameVersionsMap[game.id] || []}
-              selectedVersionId={selectedVersionsMap[game.id] || null}
-              onVersionChange={(versionId) =>
-                handleVersionChange(game.id, versionId)
-              }
-              onTierSelect={handleTierSelect}
               selectedTier={
                 selectedTier
                   ? {
@@ -179,6 +178,12 @@ export function GameCompare({ initialData }: GameCompareProps) {
                       accumulatedPercentile: selectedTier.accumulatedPercentile,
                     }
                   : undefined
+              }
+              selectedVersionId={selectedVersionsMap[game.id] || null}
+              versions={gameVersionsMap[game.id] || []}
+              onTierSelect={handleTierSelect}
+              onVersionChange={(versionId) =>
+                handleVersionChange(game.id, versionId)
               }
             />
           ))}

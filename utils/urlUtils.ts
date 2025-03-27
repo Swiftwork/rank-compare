@@ -1,4 +1,4 @@
-import { Game } from "@prisma/client";
+import { Game } from '@prisma/client';
 
 /**
  * Builds a URL query string for game comparison
@@ -10,21 +10,21 @@ import { Game } from "@prisma/client";
 export function buildGameCompareUrl(
   selectedGames: Game[],
   selectedVersionsMap: Record<number, number>,
-  selectedTier: { tierId: number } | null
+  selectedTier: { tierId: number } | null,
 ): string {
   if (selectedGames.length === 0) {
-    return "/";
+    return '/';
   }
 
-  const gameIds = selectedGames.map((g) => g.id).join(",");
+  const gameIds = selectedGames.map((g) => g.id).join(',');
 
   // Only include versions for games that are selected
   const versionIds = selectedGames
     .map((g) => selectedVersionsMap[g.id] || 0)
-    .join(",");
+    .join(',');
 
   // Include tierId in URL if a tier is selected
-  const tierIdParam = selectedTier ? `&tierId=${selectedTier.tierId}` : "";
+  const tierIdParam = selectedTier ? `&tierId=${selectedTier.tierId}` : '';
 
   return `?games=${gameIds}&versions=${versionIds}${tierIdParam}`;
 }

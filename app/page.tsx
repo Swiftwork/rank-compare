@@ -1,14 +1,16 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
+
+import { GameCompare } from '@/components/game/GameCompare';
+
 import {
-  Container,
-  VStack,
-  Heading,
-  Text,
   Box,
+  Container,
+  Heading,
   Skeleton,
-} from "@chakra-ui/react";
-import { GameCompare } from "@/components/game/GameCompare";
-import { PrismaClient } from "@prisma/client";
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import { GameVersion, PrismaClient } from '@prisma/client';
 
 // New data fetching function
 async function getGamesData(searchParams: {
@@ -22,13 +24,13 @@ async function getGamesData(searchParams: {
     // Fetch all games
     const allGames = await prisma.game.findMany({
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
 
     // Process selected games from URL params
-    const gameIds = searchParams.games?.split(",").map(Number) || [];
-    const versionIds = searchParams.versions?.split(",").map(Number) || [];
+    const gameIds = searchParams.games?.split(',').map(Number) || [];
+    const versionIds = searchParams.versions?.split(',').map(Number) || [];
 
     // Prepare selected games data structure
     const selectedGames =
@@ -37,7 +39,7 @@ async function getGamesData(searchParams: {
         : [];
 
     // Prepare versions map
-    const gameVersionsMap: Record<number, any[]> = {};
+    const gameVersionsMap: Record<number, GameVersion[]> = {};
     const selectedVersionsMap: Record<number, number> = {};
 
     // Fetch game versions for selected games
@@ -46,7 +48,7 @@ async function getGamesData(searchParams: {
         const gameId = selectedGames[i].id;
         const versions = await prisma.gameVersion.findMany({
           where: { gameId },
-          orderBy: { date: "desc" },
+          orderBy: { date: 'desc' },
         });
 
         gameVersionsMap[gameId] = versions;
@@ -123,10 +125,10 @@ export default async function ComparePage({
     <Container maxW="container.xl" py={8}>
       <VStack align="stretch" gap={8}>
         <Box>
-          <Heading size="xl" mb={2}>
+          <Heading mb={2} size="xl">
             Compare Game Ranks
           </Heading>
-          <Text color="gray.600" _dark={{ color: "gray.400" }}>
+          <Text _dark={{ color: 'gray.400' }} color="gray.600">
             Search for games and compare their ranking systems side-by-side
           </Text>
         </Box>
